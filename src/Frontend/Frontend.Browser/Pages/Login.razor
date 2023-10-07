@@ -1,55 +1,47 @@
-﻿@page "/fetchdata"
-@inject HttpClient Http
+﻿@page "/auth?"
+@using Frontend.Browser.Layouts
 
-<h1>Weather forecast</h1>
+@layout LoginLayout
 
-<p>This component demonstrates fetching data from the server.</p>
+@inject AuthorizeApi _authorizeApi
+@inject NavigationManager _navManager
 
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<div style="background: red; width: 300px; height: 300px; display: grid;">
+    <h2>Sign in to your account:</h2>
+    <input type="text" @bind-value="@_login" placeholder="Login"/>
+    <input type="password" @bind-value="@_password" placeholder="Password"/>
+    <button onclick="() => @OnLogin()">login</button>
+</div>
+<div style="background: green; width: 300px; height: 300px; display: grid;">
+    <h2>Register your account:</h2>
+    <input type="text" @bind-value="@_regName" placeholder="Screen name"/>
+    <input type="text" @bind-value="@_regLogin" placeholder="Login"/>
+    <input type="password" @bind-value="@_regPassword" placeholder="Password"/>
+    <button onclick="() => @OnRegister()">register</button>
+</div>
 
 @code {
-    private WeatherForecast[] forecasts;
+    private string _login;
+    private string _password;
 
-    protected override async Task OnInitializedAsync()
+    private string _regName;
+    private string _regLogin;
+    private string _regPassword;
+
+    private async Task OnLogin()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        var success = await _authorizeApi.Login(_login, _password);
+
+        if (success)
+            _navManager.NavigateTo("/");
     }
 
-    public class WeatherForecast
+    private async Task OnRegister()
     {
-        public DateTime Date { get; set; }
+        var success = await _authorizeApi.Login(_login, _password);
 
-        public int TemperatureC { get; set; }
-
-        public string Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        if (success)
+            _navManager.NavigateTo("/");
     }
+
 }

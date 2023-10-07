@@ -1,11 +1,11 @@
 ﻿using System;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Database
 {
-    public class MyDbContext : DbContext
+    public class MyDbContext : IdentityDbContext<UserDbModel>
     {
-        public DbSet<UserDbModel> Users { get; set; }
         public DbSet<MessageDbModel> Messages { get; set; }
         public DbSet<DialogDbModel> Dialogs{ get; set; }
 

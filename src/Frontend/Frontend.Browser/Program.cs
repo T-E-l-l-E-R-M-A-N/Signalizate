@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
+using Frontend.Shared;
 using Microsoft.AspNetCore.Components.Authorization;
 using Shared.MessengerModels;
 
@@ -24,7 +25,17 @@ namespace Frontend.Browser
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-            await builder.Build().RunAsync();
+            builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddAuthorizationCore();
+
+            builder.Services.AddScoped<AuthorizeApi>();
+            builder.Services.AddScoped<MessengerApiHelper>();
+            builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
+
+
+            var app = builder.Build();
+            
+                await app.RunAsync();
         }
     }
 
@@ -54,7 +65,7 @@ namespace Frontend.Browser
                 var tokenResponse = await _apiHelper.LoginAsync(new AuthParams()
                 {
                     Login = login,
-                    Password = securestr
+                    Password = password
                 });
 
                 if (!string.IsNullOrEmpty(tokenResponse))
@@ -88,7 +99,7 @@ namespace Frontend.Browser
                 {
                     Name = name,
                     Login = username,
-                    Password = securestr
+                    Password = password
                 });
 
                 if (!string.IsNullOrEmpty(tokenResponse))

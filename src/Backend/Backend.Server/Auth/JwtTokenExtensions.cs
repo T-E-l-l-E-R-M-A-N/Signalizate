@@ -25,7 +25,7 @@ namespace Backend.Server
 
                 new(ClaimsIdentity.DefaultNameClaimType, user.UserName),
 
-                new(ClaimTypes.NameIdentifier, user.StringId),
+                new(ClaimTypes.NameIdentifier, user.Id),
             };
 
             var userRoles = await userManager.GetRolesAsync(user);

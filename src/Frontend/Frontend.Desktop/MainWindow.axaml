@@ -1,0 +1,147 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Frontend.Desktop.MainWindow"
+        Title="Frontend.Desktop">
+	<Grid>
+		<Grid>
+			<Grid.Styles>
+				<Style Selector="Grid#history:disabled">
+					<Setter Property="Opacity" Value="0.5"/>
+				</Style>
+			</Grid.Styles>
+			<DockPanel LastChildFill="True">
+				<ItemsControl Items="{Binding Suggestions}" DockPanel.Dock="Top"
+							  Height="70">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<VirtualizingStackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal"
+										Height="30"
+										Width="100">
+								<Button Width="30"
+										   Background="Red"
+										Content="Write"
+										Command="{Binding $parent[Window].DataContext.OpenWritingToSuggestionCommand}"
+										CommandParameter="{Binding .}"/>
+								<Rectangle IsVisible="{Binding Online}" Width="8" Fill="Green"/>
+								<Rectangle IsVisible="{Binding !Online}" Width="8" Fill="Red"/>
+								<TextBlock VerticalAlignment="Center"
+										   TextAlignment="Left"
+										   Text="{Binding Name}"/>
+							</StackPanel>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+				<ListBox DockPanel.Dock="Left"
+						 Width="200"
+						 BorderBrush="Gray"
+						 BorderThickness="0,0,1,0"
+						 Background="Transparent"
+						 Items="{Binding DialogCollection}"
+						 SelectedItem="{Binding Client}">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal"
+										Height="30"
+										Width="190">
+								<Rectangle Width="30"
+										   Fill="Green"/>
+								<TextBlock VerticalAlignment="Center"
+										   TextAlignment="Left"
+										   Text="{Binding Name}"/>
+							</StackPanel>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+				<Grid x:Name="history" Background="Bisque" IsEnabled="{Binding Client, Converter={x:Static ObjectConverters.IsNotNull}}">
+					<DockPanel LastChildFill="True" >
+						<StackPanel DockPanel.Dock="Bottom">
+							<TextBox Height="24"
+									 MinHeight="24"
+									 Text="{Binding Text}">
+								<i:Interaction.Behaviors>
+									<ia:EventTriggerBehavior EventName="KeyUp">
+										<ia:InvokeCommandAction Command="{Binding TypingCommand}"/>
+									</ia:EventTriggerBehavior>
+								</i:Interaction.Behaviors>
+							</TextBox>
+							<Button Content="Send"  Command="{Binding SendCommand}"/>
+						</StackPanel>
+						<ItemsControl>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal"
+										MinHeight="30">
+										<Rectangle Width="30"
+												   Fill="Red"/>
+										<StackPanel>
+											<TextBlock VerticalAlignment="Center"
+												   TextAlignment="Left"
+												   Text="{Binding Author.Name}"/>
+											<TextBlock VerticalAlignment="Center"
+												   TextAlignment="Left"
+												   Text="{Binding Message}"/>
+										</StackPanel>
+									</StackPanel>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</DockPanel>
+				</Grid>
+			</DockPanel>
+			<Border IsVisible="{Binding WritingToSuggestion}"
+					Width="300"
+					Height="300"
+					Background="Aqua">
+				<DockPanel LastChildFill="True" >
+					<StackPanel DockPanel.Dock="Bottom">
+						<TextBox Height="24"
+								 MinHeight="24"
+								 Text="{Binding Text}">
+							<i:Interaction.Behaviors>
+								<ia:EventTriggerBehavior EventName="KeyUp">
+									<ia:InvokeCommandAction Command="{Binding TypingCommand}"/>
+								</ia:EventTriggerBehavior>
+							</i:Interaction.Behaviors>
+						</TextBox>
+						<Button Content="Send"  Command="{Binding SendToSuggestionCommand}"/>
+					</StackPanel>
+					<ToggleButton IsChecked="{Binding WritingToSuggestion}" Content="Cancel"/>
+					<TextBlock Text="{Binding SelectedSuggestion.Name}"/>
+				</DockPanel>
+			</Border>
+		</Grid>
+		
+		<Grid Background="Aqua" IsVisible="{Binding !IsAuthorized}">
+            <StackPanel Spacing="10" VerticalAlignment="Top"
+                        HorizontalAlignment="Left" Width="300">
+                <StackPanel Spacing="5" IsVisible="{Binding !IsRegister}">
+                    <TextBlock FontSize="24" Text="Login"/>
+                    <CheckBox Content="Register form" IsChecked="{Binding IsRegister}"
+                              Background="Transparent"/>
+                    <TextBox Height="24" MinHeight="24" Watermark="Login" Text="{Binding Login}"/>
+                    <TextBox Height="24" MinHeight="24" Watermark="Password" PasswordChar="@" Text="{Binding Password}"/>
+                    <Button Content="Confirm" Command="{Binding LoginCommand}"/>
+                </StackPanel>
+                <StackPanel Spacing="5" IsVisible="{Binding IsRegister}">
+                    <TextBlock FontSize="24" Text="Register account"/>
+                    <CheckBox Content="Login form" IsChecked="{Binding IsRegister}"
+                              Background="Transparent"/>
+                    <TextBox Height="24" MinHeight="24" Watermark="Name" Text="{Binding Name}"/>
+                    <TextBox Height="24" MinHeight="24" Watermark="Login" Text="{Binding Login}"/>
+                    <TextBox Height="24" MinHeight="24" Watermark="Password" PasswordChar="@" Text="{Binding Password}"/>
+                    <Button Content="Confirm" Command="{Binding RegisterCommand}"/>
+                </StackPanel>
+            </StackPanel>
+		</Grid>
+    </Grid>
+</Window>

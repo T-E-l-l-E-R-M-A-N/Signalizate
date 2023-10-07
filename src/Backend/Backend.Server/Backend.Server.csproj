@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Shared.MessengerApi\Shared.MessengerModels.csproj" />
+    <ProjectReference Include="..\..\Frontend\Frontend.Browser\Frontend.Browser.csproj" />
     <ProjectReference Include="..\Backend.Database.Models\Backend.Database.Models.csproj" />
     <ProjectReference Include="..\Backend.Database\Backend.Database.csproj" />
   </ItemGroup>

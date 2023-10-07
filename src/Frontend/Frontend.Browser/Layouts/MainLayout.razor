@@ -1,0 +1,40 @@
+﻿@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inherits LayoutComponentBase
+
+@inject NavigationManager _nav
+@inject AuthenticationStateProvider _authenticationStateProvider
+
+<AuthorizeView>
+    <div>
+        @Body
+    </div>
+</AuthorizeView>
+
+@code
+{
+    private ClaimsPrincipal? _user;
+
+    [CascadingParameter]
+    public Task<AuthenticationState>? AuthenticationState { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (AuthenticationState != null)
+        {
+            var state = await AuthenticationState;
+
+            _user = state.User;
+
+            if (_user.Identity is { IsAuthenticated: false })
+            {
+                _nav.NavigateTo("auth?");
+            }
+        }
+    }
+
+    private async Task OnLogout()
+    {
+        await ((IdentityAuthenticationStateProvider)_authenticationStateProvider).MarkLogout();
+    }
+}

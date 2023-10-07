@@ -6,6 +6,7 @@ namespace Backend.Database
     {
         public string StringId { get; set; }
         public string Name { get; set; }
+        public bool Online { get; set; }
         //public byte[] Picture { get; set; }
     }
 }
